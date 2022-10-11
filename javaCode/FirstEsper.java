@@ -14,6 +14,7 @@ public class FirstEsper{
 		System.out.println("\n\n you must insert a path to specify the root path of the your program: \n");
 		String programPath = "";
 		String attackTableName = "udpFlood";
+		//------------------------------------------------------------ change this to port for listening to netflow traffic
 		int listeningPort = 4545;
 
 		try{
