@@ -1,0 +1,26 @@
+FROM ubuntu:20.04
+LABEL name="Step1" \
+      vendor="ubuntu" \
+      build_date="02.10.2021"
+LABEL name="Step2" \
+      vendor="ubuntu" \
+      build_date="06.10.2021"
+LABEL name="Step_Final_Esper" \
+      vendor="ubuntu" \
+      build_date="09.10.2021"
+RUN apt update
+RUN apt install -y net-tools
+RUN apt install -y openjdk-11-jdk
+RUN apt install -y sqlite3
+Run apt install -y vim
+RUN apt install -y iputils-ping
+RUN mkdir /opt/service
+COPY esper-cep-version-1-0-0.tar.gz   /opt/service
+RUN cd /opt/service && tar -xzvf esper-cep-version-1-0-0.tar.gz && rm -rf esper-cep-version-1-0-0.tar.gz
+#COPY javaRun.sh /opt/service
+#COPY DatabaseHandler.java /opt/service/javaCode
+COPY attack_record.db /opt/service
+VOLUME vold:/opt/service #docker run -it -v vold:/opt/service:rw esper:v10
+WORKDIR /opt/service
+CMD ["/bin/bash"]
+
