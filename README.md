@@ -17,6 +17,8 @@ this writeup shows you how to build a CEP(Complex Event Processing) engine for y
     + 1- in **javaCode/CallbackHandler.java**, you need to specify the **syslog server IP address** and also the **port** that it listening to
     + 2- in **javaCode/FirstEsper.java**, you need to specify the **port** number that you want to listen for **netflow traffic**
     + 3- in **javaRun.sh**, you need to specify the **path** that your project is currently stored in it
+  + create EPL:
+    + in EPL file you need to write your EPLs and i placed some EPLs here as an example for you. for more information about EPLs [click this]()
     
 + ## Run:
   + **option-1(from source code)**: there are two bash scripts you can use them to compile and run the code:
