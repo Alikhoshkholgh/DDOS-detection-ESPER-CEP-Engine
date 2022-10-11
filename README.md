@@ -14,9 +14,9 @@ this writeup shows you how to build a CEP(Complex Event Processing) engine for y
 
 + ## Setup:
   + **well you need to change some things in the code**:
-    + 1- in **javaCode/CallbackHandler.java**, you need to specify the **syslog server IP address** and also the **port** that it listening to
-    + 2- in **javaCode/FirstEsper.java**, you need to specify the **port** number that you want to listen for **netflow traffic**
-    + 3- in **javaRun.sh**, you need to specify the **path** that your project is currently stored in it
+    + 1- in **[javaCode/CallbackHandler.java](https://github.com/Alikhoshkholgh/DDOS-detection-ESPER-CEP-Engine/blob/main/javaCode/CallbackHandler.java)**, you need to specify the **syslog server IP address** and also the **port** that it listening to
+    + 2- in **[javaCode/FirstEsper.java](https://github.com/Alikhoshkholgh/DDOS-detection-ESPER-CEP-Engine/blob/main/javaCode/FirstEsper.java)**, you need to specify the **port** number that you want to listen for **netflow traffic**
+    + 3- in **[javaRun.sh](https://github.com/Alikhoshkholgh/DDOS-detection-ESPER-CEP-Engine/blob/main/javaRun.sh)**, you need to specify the **path** that your project is currently stored in it
   + **create EPL**:
     + in EPL file you need to write your EPLs and i have already placed some EPLs here as an example for you. 
         + for more information about EPLs [click this](http://esper.espertech.com/release-7.1.0/esper-reference/html/gettingstarted.html#gettingstarted_steps_4)
