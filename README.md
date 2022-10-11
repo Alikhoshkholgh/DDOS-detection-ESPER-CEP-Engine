@@ -21,8 +21,10 @@ this writeup shows you how to build a CEP(Complex Event Processing) engine for y
     + 2- in **[javaCode/FirstEsper.java](https://github.com/Alikhoshkholgh/DDOS-detection-ESPER-CEP-Engine/blob/main/javaCode/FirstEsper.java)**, you need to specify the **port** number that you want to listen for **netflow traffic**
     + 3- in **[javaRun.sh](https://github.com/Alikhoshkholgh/DDOS-detection-ESPER-CEP-Engine/blob/main/javaRun.sh)**, you need to specify the **path** that your project is currently stored in it
   + **create EPL**:
-    + in EPL file you need to write your EPLs and i have already placed some EPLs here as an example for you. 
+    + in EPL Folder you need to write your EPLs and i have already placed some EPLs here as an example for you. 
         + for more information about EPLs [click this](http://esper.espertech.com/release-7.1.0/esper-reference/html/gettingstarted.html#gettingstarted_steps_4)
+    + after writing your EPLs in a file in the [EPL](https://github.com/Alikhoshkholgh/DDOS-detection-ESPER-CEP-Engine/tree/main/EPLs) Folder, you need to specify the EPL file name that you want to be imported in the Esper Engine at the [target-EPL-names](https://github.com/Alikhoshkholgh/DDOS-detection-ESPER-CEP-Engine/blob/main/EPLs/target-EPL-names)
+    
     
 + ## Run:
   + **option-1(from source code)**: there are two bash scripts you can use them to compile and run the code:
