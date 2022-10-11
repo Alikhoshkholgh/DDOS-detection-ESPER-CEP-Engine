@@ -1,0 +1,1 @@
+@Name('gather')select iana_sourceIPv4Address as srcIP, iana_destinationIPv4Address as dstIP, iana_destinationTransportPort as dstPort, iana_protocolIdentifier as protocol, iana_flowStartMilliseconds as startTime, iana_flowEndMilliseconds as endTime from myMapEvent#time_batch(15 sec) group by iana_destinationIPv4Address having count(distinct iana_destinationTransportPort)>3;

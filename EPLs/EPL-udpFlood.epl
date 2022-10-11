@@ -1,0 +1,7 @@
+
+
+@Name('udpFlood_1')insert into Target select iana_destinationIPv4Address as dstIP, iana_destinationTransportPort as dstPort, iana_sourceIPv4Address as srcIP, iana_protocolIdentifier from myMapEvent having iana_protocolIdentifier='UDP';
+
+@Name('udpFlood_2')insert into Flood select dstIP, srcIP, dstPort, count(distinct dstPort) as uniquePorts from Target#time_batch(15 sec) group by dstIP having count(distinct dstPort)>3;
+
+@Name('udpFlood_3')select dstIP, srcIP, dstPort from Flood#time_batch(15 sec) group by srcIP having count(distinct dstPort)>4;
