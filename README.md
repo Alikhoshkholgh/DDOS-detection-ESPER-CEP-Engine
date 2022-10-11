@@ -11,6 +11,9 @@ this writeup shows you how to build a CEP(Complex Event Processing) engine for y
   + 1- "EPL" is the way we call this stored requests 
   + 2- think of netflow traffic as that information which is flowing through this rules(EPL) and we can catch some statstics from this stream and after that measure an intrusion based on this
 
++ ## DDOS detection Considerations:
+  + with this approach, because of the netflow traffic that we sent to the esper engine, we dont have any information about applicatoin layer data, note that application layer data does not sent with netflow traffic, so we can not detect any DDOS attack at application layer. so we can say that this approach only works for DDOS attacks at protocol and volumetric layer.
+
 
 + ## Setup:
   + **well you need to change some things in the code**:
