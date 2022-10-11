@@ -18,7 +18,7 @@ this writeup shows you how to build a CEP(Complex Event Processing) engine for y
     + 2- in **javaCode/FirstEsper.java**, you need to specify the **port** number that you want to listen for **netflow traffic**
     + 3- in **javaRun.sh**, you need to specify the **path** that your project is currently stored in it
   + **create EPL**:
-    + in EPL file you need to write your EPLs and i placed some EPLs here as an example for you. 
+    + in EPL file you need to write your EPLs and i have already placed some EPLs here as an example for you. 
         + for more information about EPLs [click this](http://esper.espertech.com/release-7.1.0/esper-reference/html/gettingstarted.html#gettingstarted_steps_4)
     
 + ## Run:
