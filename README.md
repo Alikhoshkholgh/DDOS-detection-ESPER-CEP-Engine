@@ -19,3 +19,8 @@ this writeup shows you how to build a CEP(Complex Event Processing) engine for y
     
   + **option-2(docker file)**: you can run with docker file
     + Setup_with_docker.docker
+
++ ## References:
+  + [medium](https://medium.com/@bruno.felix/complex-event-processing-with-esper-core-concepts-f97394b39c07)
+  + [Esper github](https://github.com/espertechinc/esper)
+  + [Esper official website](http://esper.espertech.com/release-7.1.0/esper-reference/html/gettingstarted.html)
