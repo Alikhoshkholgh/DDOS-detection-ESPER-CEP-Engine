@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<esper-configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="http://www.espertech.com/schema/esper"
+    xsi:schemaLocation="
+http://www.espertech.com/schema/esper
+http://www.espertech.com/schema/esper/esper-configuration-7-0.xsd">
+
+	<event-type name="myMapEvent">
+		<java-util-map>
+			<map-property name="iana_destinationTransportPort" class="int"/>
+			<map-property name="iana_sourceIPv4Address" class="String"/>
+			<map-property name="iana_protocolIdentifier" class="String"/>
+			<map-property name="iana_destinationIPv4Address" class="String"/>
+			<map-property name="iana_flowStartMilliseconds" class="String"/>
+			<map-property name="iana_flowEndMilliseconds" class="String"/>
+		</java-util-map>
+	</event-type>
+
+	<engine-settings>
+  		<defaults>
+    		 <bytecodegen 
+      		  enable-resultset="true" 
+      		  enable-aggregation="true" 
+     	 	  enable-expression="true" 
+  	    	  enable-selectclause="true" 
+	      	  enable-fallback="false" 
+      		  enable-propertygetter="true" 
+      		  include-comments="false" 
+      		  include-debugsymbols="false"/>
+  		</defaults>
+	</engine-settings>
+
+</esper-configuration>	
+
+
+
+
+
+<!--
+
+
+  <event-type name="JsonEvent" class="JsonEvent">
+	<legacy-type accessor-style="javabean" code-generation="enabled" property-resolution-style="case_insensitive">
+		<method-property name="dstPortM" accessor-method="getDstPort"/>
+		<field-property name="srcPortF" accessor-field="srcPort"/>
+	</legacy-type>
+  </event-type>
+
+
+   Events Represented by Object[] 
+
+	  <event-type name="MyObjectArrayEvent">
+	  		<objectarray>
+	  			<objectarray-property name="carId" class="int"/>  			// arrayElement at [0]
+    				<objectarray-property name="carType" class="string"/> 			// arrayElement at [1]
+    				<objectarray-property name="assembly" class="com.mycompany.Assembly"/> 	// arrayElement at [2]    
+  			</objectarray>
+	  </event-type>
+    
+
+    we can import this class to use it in our epls like below:
+	  select Math.max(A, B)
+	   
+	classes below are imported by default:
+	   	java.lang.* / java.math.* / java.text.* / java.util.*
+
+
+
+  <auto-import import-name="org.mycompany.mypackage.MyUtility"/>
+  <auto-import import-name="org.mycompany.util.*"/>
+
+
+ <statements>
+	<statement name="statement0" definition="select * from JsonEvent" />
+ </statements>
+
+	  -->
