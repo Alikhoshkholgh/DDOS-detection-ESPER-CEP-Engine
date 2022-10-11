@@ -12,7 +12,9 @@ public class CallbackHandler{
 	EPAdministrator epAdmin;
 	SocketHandler sock;
 	LogGenerator logGen;
-	String sysLogServerIP = "192.168.44.120";
+	//--------------------------------------------------------------------change this IP to your log server
+	String sysLogServerIP = "log-server-IP"; //like "127.0.0.1"
+	//--------------------------------------------------------------------change this port to whatever your syslog server is listening to
 	int sysLogServerPort = 2020;
 	DatabaseHandler database;
 
