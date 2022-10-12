@@ -1,0 +1,36 @@
+<ipfixcol2>
+    <inputPlugins>
+        <input>
+            <name>Netflow V9 Collector</name>
+            <plugin>udp</plugin>
+            <params>
+                <localPort>4545</localPort>
+                <localIPAddress>192.168.44.120</localIPAddress>
+            </params>
+        </input>
+    </inputPlugins>
+    <outputPlugins>
+        <output>
+            <name>JSON output</name>
+            <plugin>json</plugin>
+            <params>
+                <tcpFlags>formatted</tcpFlags>
+                <timestamp>formatted</timestamp>
+                <protocol>formatted</protocol>
+                <ignoreUnknown>false</ignoreUnknown>
+                <ignoreOptions>true</ignoreOptions>
+                <nonPrintableChar>true</nonPrintableChar>
+                <splitBiflow>false</splitBiflow>
+                <outputs>
+                    <send>
+                        <name>send to network on tcp protocol</name>
+                        <ip>192.168.44.210</ip>
+                        <port>9090</port>
+                        <protocol>TCP</protocol>
+                        <blocking>no</blocking>
+                    </send>
+                </outputs>
+            </params>
+        </output>
+    </outputPlugins>
+</ipfixcol2>
