@@ -9,27 +9,33 @@ import org.json.JSONException;
 
 public class CallbackHandler{
 
-	EPAdministrator epAdmin;
-	SocketHandler sock;
-	LogGenerator logGen;
-	//--------------------------------------------------------------------change this IP to your log server
-	String sysLogServerIP = "log-server-IP"; //like "127.0.0.1"
-	//--------------------------------------------------------------------change this port to whatever your syslog server is listening to
-	int sysLogServerPort = 2020;
-	DatabaseHandler database;
+	private EPAdministrator epAdmin;
+	private SocketHandler sock;
+	private String sysLogServerIP;
+	private int sysLogServerPort;
+	private DatabaseHandler database;
+	private JSONObject db_conf;
+	private JSONObject syslog_conf;
+	private ConfigReader configReader;
 
-	public CallbackHandler(EPAdministrator _epAdmin, DatabaseHandler dbHandler){
+	public CallbackHandler(EPAdministrator _epAdmin){
+
+		this.configReader = new ConfigReader();
+                this.syslog_conf = configReader.getConfigurations("syslog");
+                this.db_conf = configReader.getConfigurations("database");
+
+		this.sysLogServerIP = (String)syslog_conf.get("destinationIP");
+		this.sysLogServerPort = Integer.parseInt((String)syslog_conf.get("destinationPort"));
+
 		this.epAdmin = _epAdmin;
-		logGen = new LogGenerator();
 		sock = new SocketHandler();
-		database = dbHandler;
+		database = new DatabaseHandler();
 	}
+
 
 	public void assignListener(String moduleName){
 		
-		
-		
-		if(moduleName.equals("EPL-udpFlood")){//--------------------------------------------------------------------------------------------------------------
+		if(moduleName.equals("EPL-udpFlood")){//-------------------------------------------------------------------------------------
 
 			this.epAdmin.getStatement("udpFlood_1").addListener((newData, oldData) -> {
 			       
@@ -47,7 +53,7 @@ public class CallbackHandler{
 					Object dstPort = (int) newData[i].get("dstPort");
 					Object Uports = (long) newData[0].get("uniquePorts");
 					System.out.println("udp-flood module  statment-2::  dstIP = "+dstIP+"  srcIP = "+srcIP+"  dstPort = "+dstPort+ " unique ports:: ");
-					sock.sendSysLog(msg, this.sysLogServerIP, this.sysLogServerPort);
+					sock.sendSysLog(msg);
 				}*/
 			
 			});
@@ -60,7 +66,8 @@ public class CallbackHandler{
 				System.out.println("\n----------------- udpFlood-3 callback ");
 
 				//------------------------------------------------------------------------------------------------
-				Map<String, Map<String, ArrayList<Integer> > > attacked_destinations = new HashMap<>();
+				//Map<String, Map<String, ArrayList<Integer> > > attacked_destinations = new HashMap<>();
+				Map<String, Map<String, Map<Integer, Integer> > > attacked_destinations = new HashMap<>();
 				for(int i=0; i<newData.length; i++){
 					String dstIP = (String) newData[i].get("dstIP");
 					String srcIP = (String) newData[i].get("srcIP");
@@ -70,22 +77,38 @@ public class CallbackHandler{
 				
 					if(attacked_destinations.containsKey(dstIP)){
 						if(attacked_destinations.get(dstIP).containsKey(srcIP)){
-							if(!attacked_destinations.get(dstIP).get(srcIP).contains(dstPort))
-								attacked_destinations.get(dstIP).get(srcIP).add(dstPort);
+							//if(!attacked_destinations.get(dstIP).get(srcIP).contains(dstPort)){
+							if(!attacked_destinations.get(dstIP).get(srcIP).containsKey(dstPort)){
+								//attacked_destinations.get(dstIP).get(srcIP).add(dstPort);
+								attacked_destinations.get(dstIP).get(srcIP).put(dstPort, 1);
+							}
+							else if(attacked_destinations.get(dstIP).get(srcIP).containsKey(dstPort)){ 	//
+								int count = attacked_destinations.get(dstIP).get(srcIP).get(dstPort);	//
+								attacked_destinations.get(dstIP).get(srcIP).put(dstPort, count+1);	//
+							}										//
+
 						}
 						else if(!attacked_destinations.get(dstIP).containsKey(srcIP)){
-							ArrayList<Integer> portList = new ArrayList<>();
-							portList.add(dstPort);
-							attacked_destinations.get(dstIP).put(srcIP, portList);
+							//ArrayList<Integer> portList = new ArrayList<>();
+							//portList.add(dstPort);
+							Map<Integer, Integer> portList = new HashMap<>();		//
+							portList.put(dstPort, 1);					//
+							attacked_destinations.get(dstIP).put(srcIP, portList);		
 						}
 					}
 					else if(!attacked_destinations.containsKey(dstIP)){
-						ArrayList<Integer> portList = new ArrayList<>();
-						portList.add(dstPort);
-						Map<String, ArrayList<Integer>> srcIP_dstPort_pair = new HashMap<>();
+						//ArrayList<Integer> portList = new ArrayList<>();
+						//portList.add(dstPort);
+						//Map<String, ArrayList<Integer>> srcIP_dstPort_pair = new HashMap<>();
+						
+						Map<Integer, Integer> portList = new HashMap<>();
+						portList.put(dstPort, 1);
+						Map<String, Map<Integer, Integer>> srcIP_dstPort_pair = new HashMap<>();
+						
 						srcIP_dstPort_pair.put(srcIP, portList);
 						attacked_destinations.put(dstIP, srcIP_dstPort_pair); 
 					}
+
 				}
 				//------------------------------------------------------------------------------------------------
 
@@ -99,31 +122,45 @@ public class CallbackHandler{
 					for(int i=0; i<attacked_destinations.size(); i++){
 					
 						//############### dstIP
-						String dstIP_finall = (String)(attacked_destinations.keySet().toArray())[i];
-						System.out.println("\n__________dstIP : " + (dstIP_finall));
+						String dstIP_final = (String)(attacked_destinations.keySet().toArray())[i];
+						System.out.println("\n__________dstIP : " + (dstIP_final));
 					
-						for(int j=0;j<attacked_destinations.get((String)(attacked_destinations.keySet().toArray())[i]).size();j++)
+						for(int j=0;j<attacked_destinations.get(dstIP_final).size();j++)
 						{
 						
 							//############### srcIP
-							String srcIP_finall = (String)(attacked_destinations.get((String)(attacked_destinations
-											.keySet().toArray())[i]).keySet().toArray())[j];
+							String srcIP_final = (String)(attacked_destinations.get(dstIP_final).keySet().toArray())[j];
 
-							//############### portCount
-							int portCount = (attacked_destinations.get((String)(attacked_destinations.keySet().toArray())[i])
-									.get((String)(attacked_destinations
-											.get((String)(attacked_destinations.keySet().toArray())[i])
-											.keySet().toArray())[j]).size()); 
 
-							sqlRecord = sqlRecord + "{'dstIP':'"+dstIP_finall
-								+"' , 'time':'"+currentTime+"', 'portCount':"
-								+portCount+", 'srcIP': '"+srcIP_finall+"'},";
+							int portCount = (attacked_destinations.get(dstIP_final).get(srcIP_final).size()); //distinct port count
+							//############### calculate Entropy
+								ArrayList<Integer> Entr_list = new ArrayList<>(attacked_destinations.get(dstIP_final).get(srcIP_final).values());
+								int sum_of_portNumbers = 0;
+									for(int n=0; n<portCount; n++)
+										sum_of_portNumbers += Entr_list.get(n);
+								//---------probability distribution
+								float[] probability_distribution = new float[portCount];
+									for(int n=0; n<portCount; n++)
+										probability_distribution[n] = ((float)(Entr_list.get(n)))/((float)sum_of_portNumbers);
+								
+								//---------Entropy value
+								float Entropy = (float)0.0;
+								for(int n=0; n<portCount; n++)
+									Entropy += probability_distribution[n] * Math.log(probability_distribution[n]);
+								Entropy = (-1) * Entropy;
 
-							System.out.println(" *  srcIP: " +srcIP_finall +"  Port Count: "+portCount);
-							sock.sendSysLog("{'dstIP': '"+dstIP_finall+"' 'srcIP':'"+srcIP_finall+"' , 'time':'"+currentTime+"', 'portCount':"+portCount+"}"
-									,this.sysLogServerIP,this.sysLogServerPort);
-							System.out.println("------------------>> syslog is sent to "+this.sysLogServerIP+" on "+this.sysLogServerPort);
+							//############### sql query string
+							sqlRecord = sqlRecord + "{'dstIP':'"+dstIP_final+"' , 'time':'"+currentTime
+										+"', 'portCount':"+portCount+", 'srcIP': '"+srcIP_final+"', 'Entropy':'"+String.valueOf(Entropy)+"'},";
 
+							System.out.println(" *  srcIP: " +srcIP_final +"  Port Count: "+portCount+"  Entropy of srcIP: "+String.valueOf(Entropy));
+							if( Boolean.parseBoolean((String)this.syslog_conf.get("sendSyslog")) ){
+								//################ send syslog
+								sock.sendSysLog("{'dstIP': '"+dstIP_final+"' 'srcIP':'"+srcIP_final
+										+"' , 'time':'"+currentTime+"', 'portCount':"+portCount+", 'Entropy':'"+String.valueOf(Entropy)+ "'}");
+								System.out.println("--------udpFlood log---------->> syslog is sent to "
+										+this.sysLogServerIP+" on "+this.sysLogServerPort);
+							}
 						}
 					}
 						sqlRecord = sqlRecord + "]";
@@ -133,7 +170,11 @@ public class CallbackHandler{
 						System.out.println(sqlRecord);
 
 						JSONArray attack_list = new JSONArray(sqlRecord);
-						database.putAttackRecord("udpFlood", attack_list);
+						if( Boolean.parseBoolean((String)this.db_conf.get("record")) ){
+							//################# record attack detail in database
+							System.out.println("\n\t------------ put attack record in database");
+							database.putAttackRecord(attack_list);
+						}
 				}
 				catch(Exception e){
 					System.out.println("in CallbackHandler. in callback of stmt[3] :: " + e);
@@ -153,7 +194,7 @@ public class CallbackHandler{
 	    this.epAdmin.getStatement("gather").addListener((newData, oldData) -> {
 
 		    String msg;
-                        for(int i=0; i<newData.length; i++){
+                        for(int i=0; i<newData.length; i++){ 
                                 String srcIP = (String) newData[i].get("srcIP");
                                 String dstIP = (String) newData[i].get("dstIP");
                                 Object dstPort = (int) newData[i].get("dstPort");
@@ -161,7 +202,10 @@ public class CallbackHandler{
                                 String startTime = (String) newData[i].get("startTime");
                                 String endTime = (String) newData[i].get("endTime");
                                 msg = "gather:: srcIP= "+srcIP+" dstIP= "+dstIP+" dstPort= "+dstPort+" protocol= "+protocol+" startTime= "+startTime+" endTime= "+endTime;
-				sock.sendSysLog(msg, this.sysLogServerIP, this.sysLogServerPort);
+				if(Boolean.parseBoolean((String)this.syslog_conf.get("sendSyslog"))){
+					System.out.println("-------------gather log ----->> syslog is sent to "+this.sysLogServerIP+" on "+this.sysLogServerPort);
+					sock.sendSysLog(msg);
+				}
                         }
 
                 });
