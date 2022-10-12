@@ -16,22 +16,22 @@ this writeup shows you how to build a CEP(Complex Event Processing) engine for y
 
 
 + ## Setup:
-  + there is some variables in **[javaClasses/configuration.xml]**(https://github.com/Alikhoshkholgh/DDOS-detection-ESPER-CEP-Engine/blob/main/javaClasses/configuration.xml) that you need to change it: 
+  + there is some variables in **[javaClasses/configuration.xml](https://github.com/Alikhoshkholgh/DDOS-detection-ESPER-CEP-Engine/blob/main/javaClasses/configuration.xml)** that you need to change it: 
     + 1- core: 
-      + program-path
-      + listening-port
-      + module="EPL-filename"
+      + program-path: set this to the path that your project is placed in it
+      + listening-port: listening port for receiving netflow traffic
+      + module="EPL-filename": in 'EPL' Folder you have your EPL modules, with this variable you can choose wich one do you want to imported to the engine
     
     + 2- database:
-      + record
-      + database-path
-      + table-name
-      + database-name
+      + record: true/false, whether you want to record infomation in database or not
+      + database-path: absolute database path
+      + table-name: arbitrary names
+      + database-name: arbitrary names
      
     + 3- syslog
-      + send-syslog
-      + destinationIP
-      + destinationPort
+      + send-syslog: true/false, whether you want send records to syslog server or not
+      + destinationIP: syslog ip address
+      + destinationPort: syslog port number
          
   + you need to change the **'path'** variable in [./javaRun.sh](https://github.com/Alikhoshkholgh/DDOS-detection-ESPER-CEP-Engine/blob/main/javaRun.sh)   
     
