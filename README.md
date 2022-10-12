@@ -1,7 +1,7 @@
 # Detect DDOS with ESPER CEP Engine with java code and netflow traffic
 
 this writeup shows you how to build a CEP(Complex Event Processing) engine for your network
-![alt text](https://raw.githubusercontent.com/Alikhoshkholgh/ESPER_CEP_Engine_java_netflow/main/CEP%20engine%20based%20on%20esper.jpeg)
+![alt text](https://github.com/Alikhoshkholgh/DDOS-detection-ESPER-CEP-Engine/blob/main/CEP%20engine%20based%20on%20esper.jpeg)
 
 + this program only works with netflow traffic, at first you need to generate netflow traffic, and create a json format for your netflow traffic and then pass this to my application
 
