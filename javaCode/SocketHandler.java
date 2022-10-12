@@ -17,11 +17,27 @@ public class SocketHandler{
 	public ServerSocket sock = null;
 	public Socket connection = null;
 	private byte[] buff = new byte[65536];
+	private int listenPort;
+	private String syslog_destinationIP;
+	private int syslog_destinationPort;
 
 
-	public boolean openReceiveSocket(int port){
+	public SocketHandler(){
+	
+		ConfigReader configReader = new ConfigReader();
+		JSONObject core_configurations = configReader.getConfigurations("core");
+		JSONObject syslog_configurations = configReader.getConfigurations("syslog");
+
+		this.listenPort = Integer.parseInt((String)core_configurations.get("listen-port"));
+		this.syslog_destinationIP = (String)syslog_configurations.get("destinationIP");
+		this.syslog_destinationPort = Integer.parseInt((String)syslog_configurations.get("destinationPort"));
+
+	
+	}
+
+	public boolean openReceiveSocket(){
 		try{
-			this.sock = new ServerSocket(port);
+			this.sock = new ServerSocket(this.listenPort);
 			System.out.println("\n----------------------------socket is created. waiting for new connectoin");
 			this.connection = this.sock.accept();
 			System.out.println("\n----------------------------new connection is found.\n");
@@ -33,15 +49,16 @@ public class SocketHandler{
 		return true;
 	}
 
-	public void sendSysLog(String msg, String IP_addr, int port){
+
+	public void sendSysLog(String msg){
 	
 		try{
                         DatagramSocket ds = new DatagramSocket();
                         byte buff[] = msg.getBytes();
-                        String ip_str = IP_addr;
+                        String ip_str = this.syslog_destinationIP;
                         byte[] ip = asBytes(ip_str);
 
-                        DatagramPacket dPacket = new DatagramPacket(buff, buff.length, InetAddress.getByAddress(ip), port);
+                        DatagramPacket dPacket = new DatagramPacket(buff, buff.length, InetAddress.getByAddress(ip), this.syslog_destinationPort);
                         ds.send(dPacket);
                 }
                 catch(IOException e){
@@ -75,12 +92,12 @@ public class SocketHandler{
 				}
 				Arrays.fill(this.buff, (byte)0x00);
 				
-				//if(payload.charAt(payload.length() - 1) == 0xa)
-				if(payload.charAt(payload.length() - 1) == '}')
+				//if(payload.charAt(payload.length() - 1) == '}')
+				if(payload.charAt(payload.length() - 1) == 0xa)
 					break;	
 			}
 
-			//payload = payload.replace("\n", "");
+			payload = payload.replace("\n", ""); //was commented  
 			payload = payload.replace("na:", "na_");
 			payload_arr = payload.split("}");
 			payload = "[";
@@ -88,6 +105,7 @@ public class SocketHandler{
 				payload = payload + x + "},";
 			payload = payload + "]";
 			payload = payload.replace("},]", "}]");
+			System.out.println("\n\n--------------------------------- payload is fetched completely.\n\n");
 			jsonPacket = new JSONArray(payload);
 
 			}
