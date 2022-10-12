@@ -6,29 +6,34 @@ import org.json.JSONException;
 
 public class DatabaseHandler{
 
+	private JSONObject db_config;
 
-	public String databaseName = "attack_record";
-	public String programPath;
-
-	public DatabaseHandler(String path){
-		this.programPath = path;
+	public DatabaseHandler(){
+		ConfigReader configReader = new ConfigReader();
+		this.db_config = configReader.getConfigurations("database");
+		this.createAttackerTable();
 	}
 
-	public void createAttackerTable(String tableName){
-	
-		if(tableName.equals("udpFlood")){
+
+	public void createAttackerTable(){
+
+		String databaseName = (String)this.db_config.get("database-name");
+		String databasePath = (String)this.db_config.get("database-path");
+		String tableName = (String)this.db_config.get("table-name");
+
+		if(tableName.equals("udpFlood") && Boolean.parseBoolean((String)this.db_config.get("record"))){
 		
 			Connection conn = null;
 			Statement stmt = null;
-
 			try{
 				Class.forName("org.sqlite.JDBC");
-				conn = DriverManager.getConnection("jdbc:sqlite:"+this.programPath+this.databaseName+".db");
+				conn = DriverManager.getConnection("jdbc:sqlite:"+databasePath+databaseName+".db");
 				stmt = conn.createStatement();
-				String sql = 	"CREATE TABLE UDPFLOOD "+
+				String sql = 	"CREATE TABLE "+tableName+
 				       		"(DSTIP TEXT NOT NULL,"+
 				       		"SRCIP TEXT NOT NULL,"+
 						"DSTPORTCOUNT INT NOT NULL,"+
+						"Entropy TEXT NOT NULL,"+
 						"TIME TEXT NOT NULL)";
 				stmt.executeUpdate(sql);
 				System.out.println("\n\t---------- UDPFLOOD table created specifically for udp-flood Attack");
@@ -36,21 +41,22 @@ public class DatabaseHandler{
        		                conn.close();
 			}
 			catch(Exception e){
-				System.out.println("\n\t------------ error in DatabaseHander. createAttackerTable:: " + e);
-			}
-			finally{
-				//System.out.println("\n\ttable exists in this place. se the program closed the statement and database connection");
+				System.out.println("\n\t------------ in DatabaseHander. createAttackerTable:: " + e);
 			}
 		}
 	}
 
 
 
-	public void putAttackRecord(String tableName, JSONArray attackDetail_list){
+	public void putAttackRecord(JSONArray attackDetail_list){
 
-		if(tableName.equals("udpFlood")){
+		String databaseName = (String)this.db_config.get("database-name");
+		String databasePath = (String)this.db_config.get("database-path");
+		String tableName = (String)this.db_config.get("table-name");
+		if(tableName.equals("udpFlood") && Boolean.parseBoolean((String)this.db_config.get("record"))){
 		  try{
-				Connection conn = DriverManager.getConnection("jdbc:sqlite:"+this.programPath+this.databaseName+".db");
+
+				Connection conn = DriverManager.getConnection("jdbc:sqlite:"+databasePath+databaseName+".db");
 				conn.setAutoCommit(false);
 	                        Statement stmt = conn.createStatement();
 			for(int i=0; i < attackDetail_list.length(); i++){
@@ -60,7 +66,8 @@ public class DatabaseHandler{
 				String dstIP = (String)attackDetail.get("dstIP");
 				String attackTime = (String)attackDetail.get("time");
 				int portCount = (int)attackDetail.get("portCount");
-				String sql = "INSERT INTO UDPFLOOD (DSTIP,SRCIP,TIME,DSTPORTCOUNT) VALUES (\""+dstIP+"\",\""+srcIP+"\",\""+attackTime+"\","+portCount+")";
+				String entropy =  (String)(attackDetail.get("Entropy"));
+				String sql = "INSERT INTO "+tableName+" (DSTIP,SRCIP,TIME,DSTPORTCOUNT,ENTROPY) VALUES (\""+dstIP+"\",\""+srcIP+"\",\""+attackTime+"\","+portCount+",\""+entropy+"\")";
 				stmt.executeUpdate(sql);
 			}
 			stmt.close();
@@ -79,17 +86,19 @@ public class DatabaseHandler{
 
 
 
-	public JSONArray readAttackRecord(String tableName){
+	public JSONArray readAttackRecord(){
 	
 		JSONArray attackRecord = new JSONArray();
 		JSONObject attackDetail = new JSONObject();
-
-
-
-		if(tableName.equals("udpFlood")){
+		String databaseName = (String)this.db_config.get("database-name");
+		String databasePath = (String)this.db_config.get("database-path");
+		String tableName = (String)this.db_config.get("table-name");
+		if(tableName.equals("udpFlood") && Boolean.parseBoolean((String)this.db_config.get("record")) ){
 		
 			try{
-				Connection conn = DriverManager.getConnection("jdbc:sqlite:"+this.programPath+this.databaseName+".db");
+		
+
+				Connection conn = DriverManager.getConnection("jdbc:sqlite:"+databasePath+databaseName+".db");
 				Statement stmt = conn.createStatement();	
 				ResultSet rs = stmt.executeQuery("SELECT * FROM "+tableName+";");
 				while(rs.next()){
@@ -97,11 +106,13 @@ public class DatabaseHandler{
 					String dstIP 	= rs.getString("DSTIP");
 					String Time 	= rs.getString("TIME");
 					int portCount 	= rs.getInt("DSTPORTCOUNT");
+					String entropy	= rs.getString("ENTROPY");
 
 					attackDetail.put("srcIP", srcIP);
 					attackDetail.put("dstIP", dstIP);
 					attackDetail.put("time", Time);
 					attackDetail.put("portCount", portCount);
+					attackDetail.put("entropy", entropy);
 
 					attackRecord.put(attackDetail);
 				}
