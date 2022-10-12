@@ -1,0 +1,21 @@
+From ubuntu:20.04
+LABEL name="ipfixcol2" \
+      vendor="ubuntu" \
+      build_date="10.11.2021"
+LABEL name="ipfixcol2" \
+      vendor="ubuntu" \
+      build_date="10.13.2021"
+RUN apt update -y
+RUN ln -snf /usr/share/zoneinfo/$CONTAINER_TIMEZONE /etc/localtime && echo $CONTAINER_TIMEZONE > /etc/timezone
+RUN apt-get install -y tzdata
+RUN apt install net-tools -y && apt install gcc -y && apt install g++ -y && apt install git -y && apt install make -y && apt install cmake -y
+RUN apt install python3-docutils -y && apt install zlib1g-dev -y && apt install librdkafka-dev -y
+RUN apt -y install liblz4-dev &&  apt -y install libxml2 libxml2-dev &&  apt -y install -y libzstd-dev && apt-get -y install python-docutils
+RUN git clone https://github.com/CESNET/libfds.git
+RUN cd /libfds &&  mkdir build && cd build && cmake .. -DCMAKE_INSTALL_PREFIX=/usr &&  make &&  make install
+RUN git clone https://github.com/CESNET/ipfixcol2.git
+RUN cd /ipfixcol2 &&  mkdir build && cd build && cmake .. && make  && make install
+RUN apt install -y iputils-ping
+COPY config.xml /
+CMD ["/bin/bash"]
+
