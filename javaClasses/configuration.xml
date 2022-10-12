@@ -16,62 +16,33 @@ http://www.espertech.com/schema/esper/esper-configuration-7-0.xsd">
 		</java-util-map>
 	</event-type>
 
-	<engine-settings>
-  		<defaults>
-    		 <bytecodegen 
-      		  enable-resultset="true" 
-      		  enable-aggregation="true" 
-     	 	  enable-expression="true" 
-  	    	  enable-selectclause="true" 
-	      	  enable-fallback="false" 
-      		  enable-propertygetter="true" 
-      		  include-comments="false" 
-      		  include-debugsymbols="false"/>
-  		</defaults>
-	</engine-settings>
+
+
+	<custom-config>
+		<core>
+			<program-path>/opt/service/</program-path>
+			<listening-port>4040</listening-port>
+			<EPL>
+				<module name="EPL-udpFlood"/>
+			</EPL>
+		</core>
+
+		<database>
+			<record>true</record>
+			<database-path>/opt/service/database/</database-path>
+			<table-name>udpFlood</table-name>
+			<database-name>attack_record</database-name>
+		</database>
+
+		<syslog>	
+			<send-syslog>false</send-syslog>
+			<destinationIP>192.168.100.120</destinationIP>
+			<destinationPort>2020</destinationPort>
+		</syslog>
+
+	</custom-config>
+
 
 </esper-configuration>	
 
 
-
-
-
-<!--
-
-
-  <event-type name="JsonEvent" class="JsonEvent">
-	<legacy-type accessor-style="javabean" code-generation="enabled" property-resolution-style="case_insensitive">
-		<method-property name="dstPortM" accessor-method="getDstPort"/>
-		<field-property name="srcPortF" accessor-field="srcPort"/>
-	</legacy-type>
-  </event-type>
-
-
-   Events Represented by Object[] 
-
-	  <event-type name="MyObjectArrayEvent">
-	  		<objectarray>
-	  			<objectarray-property name="carId" class="int"/>  			// arrayElement at [0]
-    				<objectarray-property name="carType" class="string"/> 			// arrayElement at [1]
-    				<objectarray-property name="assembly" class="com.mycompany.Assembly"/> 	// arrayElement at [2]    
-  			</objectarray>
-	  </event-type>
-    
-
-    we can import this class to use it in our epls like below:
-	  select Math.max(A, B)
-	   
-	classes below are imported by default:
-	   	java.lang.* / java.math.* / java.text.* / java.util.*
-
-
-
-  <auto-import import-name="org.mycompany.mypackage.MyUtility"/>
-  <auto-import import-name="org.mycompany.util.*"/>
-
-
- <statements>
-	<statement name="statement0" definition="select * from JsonEvent" />
- </statements>
-
-	  -->
