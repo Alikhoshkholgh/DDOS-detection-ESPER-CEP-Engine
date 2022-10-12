@@ -16,7 +16,7 @@ this writeup shows you how to build a CEP(Complex Event Processing) engine for y
 
 
 + ## Setup:
-  + Collector: you should send the netflow traffic from your netflow agent to the collector, all you need to have about collector is in **[./IPfix-Collector2](https://github.com/Alikhoshkholgh/DDOS-detection-ESPER-CEP-Engine/tree/main/IPfix-Collector2)**, in this case i used [ipfixcol2](https://github.com/CESNET/ipfixcol2). you can modify the conf.xml file in this directory and simply set it up with this [dockerfile](https://github.com/Alikhoshkholgh/DDOS-detection-ESPER-CEP-Engine/blob/main/IPfix-Collector2/dockerfile.docker).
+  + Collector: you should send the netflow traffic from your netflow agent to the collector, all you need to have about collector is in **[IPfix-Collector2](https://github.com/Alikhoshkholgh/DDOS-detection-ESPER-CEP-Engine/tree/main/IPfix-Collector2)**, in this case i used [ipfixcol2](https://github.com/CESNET/ipfixcol2). you can modify the conf.xml file in this directory and simply set it up with this [dockerfile](https://github.com/Alikhoshkholgh/DDOS-detection-ESPER-CEP-Engine/blob/main/IPfix-Collector2/dockerfile.docker).
   
   + **source code**: there is some variables in **[javaClasses/configuration.xml](https://github.com/Alikhoshkholgh/DDOS-detection-ESPER-CEP-Engine/blob/main/javaClasses/configuration.xml)** that you need to change it: 
     + 1- core: 
